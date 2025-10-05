@@ -1,18 +1,16 @@
-"""
-Password Hash Generator for Streamlit App
-Run this script locally to generate password hashes for new users
+#Password Hash Generator for Streamlit App
+#Run this script locally to generate password hashes for new users
 
-Usage:
-    python generate_password.py
+#Usage:
+#    python generate_password.py
 
-Then copy the output to your Streamlit secrets.toml file
-"""
+#Then copy the output to your Streamlit secrets.toml file
 
 import bcrypt
 import sys
 
 def generate_password_hash(password):
-    """Generate a bcrypt hash for a password"""
+    #"""Generate a bcrypt hash for a password"""
     # Convert password to bytes
     password_bytes = password.encode('utf-8')
     # Generate salt and hash
@@ -22,7 +20,7 @@ def generate_password_hash(password):
     return hashed.decode('utf-8')
 
 def get_input(prompt):
-    """Get input with compatibility for different Python versions"""
+   # """Get input with compatibility for different Python versions"""
     try:
         return input(prompt)
     except EOFError:
