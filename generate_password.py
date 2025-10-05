@@ -1,16 +1,18 @@
-#Password Hash Generator for Streamlit App
-#Run this script locally to generate password hashes for new users
+"""
+Password Hash Generator for Streamlit App
+Run this script locally to generate password hashes for new users
 
-#Usage:
-#    python generate_password.py
+Usage:
+    python generate_password.py
 
-#Then copy the output to your Streamlit secrets.toml file
+Then copy the output to your Streamlit secrets.toml file
+"""
 
 import bcrypt
-import getpass
+import sys
 
 def generate_password_hash(password):
-   # """Generate a bcrypt hash for a password"""
+    """Generate a bcrypt hash for a password"""
     # Convert password to bytes
     password_bytes = password.encode('utf-8')
     # Generate salt and hash
@@ -19,6 +21,13 @@ def generate_password_hash(password):
     # Return as string
     return hashed.decode('utf-8')
 
+def get_input(prompt):
+    """Get input with compatibility for different Python versions"""
+    try:
+        return input(prompt)
+    except EOFError:
+        return ""
+
 def main():
     print("=" * 60)
     print("Streamlit App - Password Hash Generator")
@@ -26,19 +35,20 @@ def main():
     print()
     
     # Get username
-    username = input("Enter username: ").strip()
+    username = get_input("Enter username: ").strip()
     if not username:
         print("❌ Username cannot be empty!")
         return
     
-    # Get password (hidden input)
-    password = getpass.getpass("Enter password: ")
+    # Get password
+    print("\nNote: Password will be visible as you type")
+    password = get_input("Enter password: ").strip()
     if not password:
         print("❌ Password cannot be empty!")
         return
     
     # Confirm password
-    password_confirm = getpass.getpass("Confirm password: ")
+    password_confirm = get_input("Confirm password: ").strip()
     if password != password_confirm:
         print("❌ Passwords do not match!")
         return
@@ -47,7 +57,7 @@ def main():
     print("\nAvailable roles:")
     print("  1. admin (full access)")
     print("  2. user (restricted access)")
-    role_choice = input("Select role (1 or 2): ").strip()
+    role_choice = get_input("Select role (1 or 2): ").strip()
     
     role = "admin" if role_choice == "1" else "user"
     
@@ -55,9 +65,12 @@ def main():
     if role == "user":
         print("\nEnter allowed modules (comma-separated)")
         print("Example: App1, App3, Dashboard")
-        modules_input = input("Allowed modules: ").strip()
-        modules = [m.strip() for m in modules_input.split(",") if m.strip()]
-        modules_str = str(modules)
+        modules_input = get_input("Allowed modules: ").strip()
+        if modules_input:
+            modules = [m.strip() for m in modules_input.split(",") if m.strip()]
+            modules_str = str(modules)
+        else:
+            modules_str = '["Dashboard"]'
     else:
         modules_str = '["all"]'
     
@@ -86,5 +99,9 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         print("\n\n❌ Cancelled by user")
+        sys.exit(0)
     except Exception as e:
         print(f"\n❌ Error: {e}")
+        import traceback
+        traceback.print_exc()
+        sys.exit(1)
